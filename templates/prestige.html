@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+	<div class="content-section">
+		<form method="POST">
+			<fieldset class="form-group">
+				<legend class="border-bottom mb-4">Wygeneruj oferte Prestige</legend>
+				<div>{{ form.address.label }}: {{ form.address() }}</div>
+				<div>{{ form.owner.label }}: {{ form.owner() }}</div>
+				<div>{{ form.yearly_mean.label }}: {{ form.yearly_mean() }}</div>
+				<div>{{ form.installation_type.label }}: {{ form.installation_type() }}</div>
+				<div>{{ form.inverter.label }}: {{ form.inverter() }}</div>
+				<div>{{ form.panel.label }}: {{form.panel() }}</div>
+				<div>{{ form.optimisers.label }}: {{ form.optimisers() }}</div>
+				<div>{{ form.thermo.label }}: {{ form.thermo() }}</div>
+			</fieldset>
+			<div class="form-group">
+				<button class="btn btn-outline-info" type="submit">Oblicz</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}
