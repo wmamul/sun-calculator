@@ -1,6 +1,4 @@
 # -*-  coding=utf-8 -*-
-from __future__ import unicode_literals
-from flask import request
 from decimal import *
 from typing import Tuple
 from collections import OrderedDict
@@ -8,10 +6,14 @@ import inspect
 from reportlab import rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen.canvas import Canvas
+from reportlat.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.units import cm, inch
+from reportlab.pdfgen.canvas import Canvas
 from datetime import datetime
 import pdb
+
+BOLD_FONT = 'LiberationSans-Bold'
+NORMAL_FONT = 'LiberationSans-Regular'
 
 TWOPLACES = Decimal(10) ** -2
 
@@ -304,13 +306,24 @@ class Offer:
         pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 24 * cm, mask='auto')
 
         text = pdf_canvas.beginText(2 * cm, 22 * cm)
-        text.setFont('LiberationSans-Regular', 12)
 
         for key, value in data.items():
-            field = f'{key}{value}'
+            
+            field_cursor = text.getCursor()
+
+            text.setFont('LiberationSans-Bold', 12)
+            field = f'{key}'
             text.textLines(field)
+
+            field_width = stringWidth(field,
+
+            text.setFont('LiberationSans-Regular', 12)
+            field_value = f'{value}'
+            text.textLines(field_value)
+
             if 'Audyt' in key:
                 text.textLines('\n')
+
         pdf_canvas.drawText(text)
 
         pdf_canvas.save()
