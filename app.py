@@ -1,8 +1,8 @@
 from flask import Flask, request, render_template, redirect, send_file
-from app.calculator.offer import Offer
-from app.calculator.interface import PrestigePackage, VipPackage, ClassicPackage
+from calculator.offer import Offer
+from calculator.interface import PrestigePackage, VipPackage, ClassicPackage
 
-application = Flask(__name__, template_folder='../templates/', static_folder='../static/')
+application = Flask(__name__, template_folder='templates/', static_folder='static/')
 
 @application.route('/')
 def main():

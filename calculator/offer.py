@@ -253,7 +253,7 @@ class Offer:
         if self._net_price == 0:
             self._raw()
 
-        rl_config.TTFSearchPath.append('../static/fonts/')
+        rl_config.TTFSearchPath.append('static/fonts/')
 
         pdfmetrics.registerFont(TTFont('LiberationSans-Regular', 'LiberationSans-Regular.ttf'))
         pdfmetrics.registerFont(TTFont('LiberationSans-Bold', 'LiberationSans-Bold.ttf'))
@@ -288,10 +288,10 @@ class Offer:
         current_time = datetime.utcnow().strftime("%H%M%S")
         title = f'{self._owner}_{current_date}_{current_time}.pdf'
 
-        pdf_canvas = Canvas('../static/offers/' + title)
+        pdf_canvas = Canvas('static/offers/' + title)
         pdf_canvas.setTitle(title)
 
-        pdf_canvas.drawImage('../static/images/hsg_logo.png', 1 * cm, 27 * cm,\
+        pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 27 * cm,\
                 width=186, height=44, mask='auto')
 
         text = pdf_canvas.beginText(2 * cm, 25 * cm)
@@ -300,11 +300,11 @@ class Offer:
 
             field_cursor = text.getCursor()
 
-            text.setFont('LiberationSans-Bold', 12)
+            text.setFont(BOLD_FONT, 12)
             field = f'{key}'
             text.textLines(field)
 
-            field_width = stringWidth(field.split('\n')[-1], 'LiberationSans-Bold', 12)
+            field_width = stringWidth(field.split('\n')[-1], BOLD_FONT, 12)
             ver_diff = text.getCursor()[1] - field_cursor[1]
 
             if key == f'Koszt instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": '\
@@ -313,7 +313,7 @@ class Offer:
 
             text.moveCursor(field_width + 0.1 * cm, ver_diff)
 
-            text.setFont('LiberationSans-Regular', 12)
+            text.setFont(NORMAL_FONT, 12)
 
             if 'Cena' in key or 'Koszt' in key:
                 field_value = f'{value} zł'
@@ -330,7 +330,7 @@ class Offer:
                 text.textLines('\n')
 
         foot = pdf_canvas.beginText(2 * cm, 6 * cm)
-        foot.setFont('LiberationSans-Regular', 9)
+        foot.setFont(NORMAL_FONT, 9)
         foot.textLines(FOOTER)
 
         pdf_canvas.drawText(text)
@@ -338,5 +338,5 @@ class Offer:
 
         pdf_canvas.save()
 
-        return '../static/offers/' + title
+        return 'static/offers/' + title
 
