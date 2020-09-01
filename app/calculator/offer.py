@@ -253,7 +253,7 @@ class Offer:
         if self._net_price == 0:
             self._raw()
 
-        rl_config.TTFSearchPath.append('static/fonts/')
+        rl_config.TTFSearchPath.append('../static/fonts/')
 
         pdfmetrics.registerFont(TTFont('LiberationSans-Regular', 'LiberationSans-Regular.ttf'))
         pdfmetrics.registerFont(TTFont('LiberationSans-Bold', 'LiberationSans-Bold.ttf'))
@@ -286,10 +286,12 @@ class Offer:
 
         current_date = datetime.utcnow().strftime("%d%m%Y")
         current_time = datetime.utcnow().strftime("%H%M%S")
+        title = f'{self._owner}_{current_date}_{current_time}.pdf'
 
-        pdf_canvas = Canvas(f'{self._owner}_{current_date}_{current_time}.pdf')
+        pdf_canvas = Canvas('../static/offers/' + title)
+        pdf_canvas.setTitle(title)
 
-        pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 27 * cm,\
+        pdf_canvas.drawImage('../static/images/hsg_logo.png', 1 * cm, 27 * cm,\
                 width=186, height=44, mask='auto')
 
         text = pdf_canvas.beginText(2 * cm, 25 * cm)
@@ -336,5 +338,5 @@ class Offer:
 
         pdf_canvas.save()
 
-        return data
+        return '../static/offers/' + title
 

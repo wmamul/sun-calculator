@@ -1,10 +1,10 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, send_file
 from calculator.offer import Offer
 from calculator.interface import PrestigePackage, VipPackage, ClassicPackage
 import json
 import pdb
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates/', static_folder='../static/')
 
 @app.route('/')
 def main():
@@ -20,7 +20,7 @@ def prestige_post():
     form = PrestigePackage(request.form)
     if request.method == 'POST' and form.validate:
         offer = Offer(form, p='prestige')
-        return json.dumps(offer.pdf())
+        return send_file(offer.pdf())
     return render_templace('prestige.html', form=form)
 
 @app.route('/vip', methods=['GET'])
@@ -35,7 +35,7 @@ def vip_post():
     form = VipPackage(request.form) 
     if request.method == 'POST' and form.validate:
         offer = Offer(form, p='vip')
-        return json.dumps(offer.pdf())
+        return send_file(offer.pdf())
     return render_template('vip.html', form=form)
 
 @app.route('/classic', methods=['GET'])
@@ -50,9 +50,8 @@ def classic_post():
     form = ClassicPackage(request.form) 
     if request.method == 'POST' and form.validate:
         offer = Offer(form, p='classic')
-        return json.dumps(offer.pdf())
+        return send_file(offer.pdf())
     return render_template('classic.html', form=form)
 
-if __name__ == '__main__':
+def run_app():
     app.run()
-
