@@ -2,14 +2,15 @@ from decimal import ROUND_DOWN
 from typing import Dict
 from .offer import Offer, INVERTER_TYPES, INSTALLATION_TYPES, PANEL_TYPES, THERMO_TYPES
 from wtforms import Form, BooleanField, SelectField, StringField, DecimalField
+from wtforms.validators import InputRequired
 
 
 class OfferClass(Form):
 
-    address = StringField('Adres')
-    owner = StringField('Właściciel')
+    address = StringField('Adres', validators=[InputRequired()])
+    owner = StringField('Właściciel', validators=[InputRequired()])
     yearly_mean = DecimalField('Średnie roczne zużycie energetyczne [MWh]', places=3,\
-            rounding=ROUND_DOWN)
+            rounding=ROUND_DOWN, validators=[InputRequired()])
     installation_type = SelectField('Typ instalacji', choices=INSTALLATION_TYPES)
     inverter = SelectField('Typ inwertera', choices=INVERTER_TYPES.keys())
     optimisers = BooleanField('Optymalizatory')
