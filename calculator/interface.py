@@ -7,8 +7,8 @@ from wtforms import Form, BooleanField, SelectField, StringField, DecimalField
 class OfferClass(Form):
 
     address = StringField('Adres')
-    owner = StringField('Wlasciciel')
-    yearly_mean = DecimalField('Srednie roczne zuzycie [MWh]', places=3,\
+    owner = StringField('Właściciel')
+    yearly_mean = DecimalField('Średnie roczne zużycie energetyczne [MWh]', places=3,\
             rounding=ROUND_DOWN)
     installation_type = SelectField('Typ instalacji', choices=INSTALLATION_TYPES)
     inverter = SelectField('Typ inwertera', choices=INVERTER_TYPES.keys())

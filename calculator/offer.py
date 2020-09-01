@@ -6,7 +6,7 @@ import inspect
 from reportlab import rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlat.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.units import cm, inch
 from reportlab.pdfgen.canvas import Canvas
 from datetime import datetime
@@ -50,6 +50,19 @@ PACKAGE_CONSTS = {
             'Audyt': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'}
         }
 
+FOOTER = [
+        'Kamil Kupsik',
+        'Doradca handlowy',
+        '+48 515 076 934',
+        'HSG Sun Sp. z.o.o.',
+        'ul. Okopowa 58/72',
+        '01-042 Warszawa',
+        '+48 530 439 439 biuro',
+        '+48 530 164 164 infolinia handlowa',
+        'mailto: kamil.kupsik@hsgsun.com.pl',
+        'https://www.hsgsun.com.pl'
+        ]
+        
 class LastUpdatedOrderedDict(OrderedDict):
     'Store items in the order the keys were last added'
 
@@ -144,13 +157,10 @@ class Offer:
 
 
     def _with_opts(self):
-        if self._optimizers:
-            if self._net_price == 0:
-                self._raw()
+        if self._net_price == 0:
+            self._raw()
 
-            return self._power * PACKAGE_OPTS[self._package]
-        else:
-            return "N/D"
+        return self._power * PACKAGE_OPTS[self._package]
 
     def _with_subsidy(self, value: Decimal):
         return value - 5000
@@ -161,12 +171,9 @@ class Offer:
         return thermo_price.quantize(TWOPLACES)
 
     def _with_opts_and_thermo(self):
-        if self._optimizers:
-            gross_price = self._gross(self._net_price + self._with_opts())
-            thermo_price = gross_price - (gross_price * self.thermo)
-            return thermo_price.quantize(TWOPLACES)
-        else:
-            return "N/D"
+        gross_price = self._gross(self._net_price + self._with_opts())
+        thermo_price = gross_price - (gross_price * self.thermo)
+        return thermo_price.quantize(TWOPLACES)
 
     def _gross(self, value: Decimal):
         return value + value * self._tax
@@ -250,10 +257,10 @@ class Offer:
                 'Cena instalacji brutto z optymalizatorami: ': self.gross(self._net_price + self._with_opts()),
                 'Koszt instalacji z dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price),
                 'Koszt instalacji z optymalizatorami i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price + self._with_opts()),
-                f'Koszt instalacji z z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_thermo()),
-                f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': self.gross_with_subsidy(self._with_thermo()),
+                f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_thermo()),
+                f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._with_thermo()),
                 f'Koszt instalacji z optymalizatorami i ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_opts_and_thermo()),
-                f'Koszt instalacji z optymalizatorami, z ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": ': str(self._with_subsidy(self._with_opts_and_thermo()))
+                f'Koszt instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": ': str(self._with_subsidy(self._with_opts_and_thermo()))
                 }
         ordered_prices = LastUpdatedOrderedDict()
 
@@ -303,28 +310,50 @@ class Offer:
 
         pdf_canvas = Canvas(f'{self._owner}_{current_date}_{current_time}.pdf')
 
-        pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 24 * cm, mask='auto')
+        pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 27 * cm,\
+                width=186, height=44, mask='auto')
 
-        text = pdf_canvas.beginText(2 * cm, 22 * cm)
+        text = pdf_canvas.beginText(2 * cm, 25 * cm)
 
         for key, value in data.items():
-            
+
             field_cursor = text.getCursor()
 
             text.setFont('LiberationSans-Bold', 12)
             field = f'{key}'
             text.textLines(field)
 
-            field_width = stringWidth(field,
+            field_width = stringWidth(field.split('\n')[-1], 'LiberationSans-Bold', 12)
+            ver_diff = text.getCursor()[1] - field_cursor[1]
+
+            if key == f'Koszt instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": '\
+            or key == f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ':
+                ver_diff = ver_diff / 2
+
+            text.moveCursor(field_width + 0.1 * cm, ver_diff)
 
             text.setFont('LiberationSans-Regular', 12)
-            field_value = f'{value}'
+
+            if 'Cena' in key or 'Koszt' in key:
+                field_value = f'{value} zł'
+            else:
+                field_value = f'{value}'
+
             text.textLines(field_value)
+
+            hor_diff = text.getCursor()[0] - field_cursor[0]
+
+            text.moveCursor(-hor_diff, 0)
 
             if 'Audyt' in key:
                 text.textLines('\n')
 
+        foot = pdf_canvas.beginText(2 * cm, 6 * cm)
+        foot.setFont('LiberationSans-Regular', 9)
+        foot.textLines(FOOTER)
+
         pdf_canvas.drawText(text)
+        pdf_canvas.drawText(foot)
 
         pdf_canvas.save()
 
