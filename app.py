@@ -23,18 +23,34 @@ def prestige_post():
         return json.dumps(offer.pdf())
     return render_templace('prestige.html', form=form)
 
-@app.route('/vip')
+@app.route('/vip', methods=['GET'])
 def vip():
     form = VipPackage() 
     if request.method == 'POST' and form.validate:
         return redirect('vip')
     return render_template('vip.html', form=form)
 
-@app.route('/classic')
+@app.route('/vip', methods=['POST'])
+def vip_post():
+    form = VipPackage(request.form) 
+    if request.method == 'POST' and form.validate:
+        offer = Offer(form, p='vip')
+        return json.dumps(offer.pdf())
+    return render_template('vip.html', form=form)
+
+@app.route('/classic', methods=['GET'])
 def classic():
     form = ClassicPackage() 
     if request.method == 'POST' and form.validate:
         return redirect('classic')
+    return render_template('classic.html', form=form)
+
+@app.route('/classic', methods=['POST'])
+def classic_post():
+    form = ClassicPackage(request.form) 
+    if request.method == 'POST' and form.validate:
+        offer = Offer(form, p='classic')
+        return json.dumps(offer.pdf())
     return render_template('classic.html', form=form)
 
 if __name__ == '__main__':

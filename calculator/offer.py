@@ -26,9 +26,6 @@ PANEL_TYPES = {'Astroenergy Full Black 350/360WP': (350, 12, 25),\
 INSTALLATION_TYPES = ['Gospodarstwo domowe', 'Gospodarstwo rolne',\
         'Instalacja na potrzeby firmy']
 
-MAPPED_VALUES = ['_address', '_owner', '_type', 'inverter',\
-        'power', 'panel', 'num_of_panels', 'net_price', '_optimizers']
-
 PACKAGE_PRICES = {'prestige': 5000, 'vip': 4500, 'classic': 4250}
 PACKAGE_OPTS = {'prestige': 400, 'vip': 300, 'classic': 200}
 SOLAR_EDGE_ADDITION = 450
@@ -41,11 +38,11 @@ PACKAGE_CONSTS = {
                     w celu jak największego bezpieczeństwa instalacji',
             'Audyt: ': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'},
         'vip': {
-            'Monitoring': 'konfiguracja WIFI + monitoring',
-            'Audyt': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'},
+            'Monitoring: ': 'konfiguracja WIFI + monitoring',
+            'Audyt: ': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'},
         'classic': {
-            'Monitoring': 'wytyczne do samodzielnej konfiguracji WIFI',
-            'Audyt': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'}
+            'Monitoring: ': 'wytyczne do samodzielnej konfiguracji WIFI',
+            'Audyt: ': 'Sprawdzenie instalacji pod kątem jej wydajności przed uruchomieniem'}
         }
 
 class LastUpdatedOrderedDict(OrderedDict):
@@ -69,20 +66,6 @@ class Panel:
         self.power = data[1][0]
         self.product_warranty = data[1][1]
         self.linear_warranty = data[1][2]
-
-class OfferMapper:
-
-    def __init__(self, offer):
-        self._mapped_class = offer
-
-    def get_dict(self):
-        self.map = []
-        for i in inspect.getmembers(self._mapped_class):
-            if i[0] in MAPPED_VALUES:
-                self.map.append(i)
-
-        return dict(self.map)
-
 
 class Offer:
 
@@ -235,10 +218,6 @@ class Offer:
     @net_price.deleter
     def net_price(self):
         del self._net_price
-
-    def get_map(self):
-        mapper = OfferMapper(self)
-        return mapper.get_dict()
 
     def calculate(self):
 

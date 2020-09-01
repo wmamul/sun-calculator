@@ -29,8 +29,8 @@ class PrestigePackage(OfferClass):
 
 class VipPackage(OfferClass):
 
-    panel = list(PANEL_TYPES.keys())[2]
+    panel = SelectField('Rodzaj paneli', choices=[list(PANEL_TYPES.keys())[2]])
 
 class ClassicPackage(OfferClass):
 
-    panel = list(PANEL_TYPES.keys())[3]
+    panel = SelectField('Rodzaj paneli', choices=[list(PANEL_TYPES.keys())[3]])
