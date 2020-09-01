@@ -1,1 +1,1 @@
-web: gunicorn 'app:__init__' --log-file server.log
+web: gunicorn 'app' --log-file server.log
