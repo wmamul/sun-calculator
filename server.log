@@ -1,0 +1,33 @@
+[2020-09-01 10:56:04 +0200] [213245] [INFO] Starting gunicorn 20.0.4
+[2020-09-01 10:56:04 +0200] [213245] [INFO] Listening at: http://127.0.0.1:8000 (213245)
+[2020-09-01 10:56:04 +0200] [213245] [INFO] Using worker: sync
+[2020-09-01 10:56:04 +0200] [213247] [INFO] Booting worker with pid: 213247
+[2020-09-01 10:56:34 +0200] [213245] [CRITICAL] WORKER TIMEOUT (pid:213247)
+[2020-09-01 10:56:34 +0200] [213247] [INFO] Worker exiting (pid: 213247)
+[2020-09-01 10:56:34 +0200] [213665] [INFO] Booting worker with pid: 213665
+[2020-09-01 10:57:04 +0200] [213245] [CRITICAL] WORKER TIMEOUT (pid:213665)
+[2020-09-01 10:57:04 +0200] [213665] [INFO] Worker exiting (pid: 213665)
+[2020-09-01 10:57:04 +0200] [213991] [INFO] Booting worker with pid: 213991
+[2020-09-01 10:57:34 +0200] [213245] [CRITICAL] WORKER TIMEOUT (pid:213991)
+[2020-09-01 10:57:34 +0200] [213991] [INFO] Worker exiting (pid: 213991)
+[2020-09-01 10:57:34 +0200] [214314] [INFO] Booting worker with pid: 214314
+[2020-09-01 10:58:04 +0200] [213245] [CRITICAL] WORKER TIMEOUT (pid:214314)
+[2020-09-01 10:58:04 +0200] [214314] [INFO] Worker exiting (pid: 214314)
+[2020-09-01 10:58:04 +0200] [214676] [INFO] Booting worker with pid: 214676
+[2020-09-01 10:58:12 +0200] [213245] [INFO] Handling signal: int
+[2020-09-01 10:58:12 +0200] [214676] [INFO] Worker exiting (pid: 214676)
+[2020-09-01 10:58:12 +0200] [213245] [INFO] Shutting down: Master
+[2020-09-01 10:58:13 +0200] [214760] [INFO] Starting gunicorn 20.0.4
+[2020-09-01 10:58:13 +0200] [214760] [INFO] Listening at: http://127.0.0.1:8000 (214760)
+[2020-09-01 10:58:13 +0200] [214760] [INFO] Using worker: sync
+[2020-09-01 10:58:13 +0200] [214762] [INFO] Booting worker with pid: 214762
+[2020-09-01 10:58:34 +0200] [214760] [INFO] Handling signal: int
+[2020-09-01 10:58:35 +0200] [214762] [INFO] Worker exiting (pid: 214762)
+[2020-09-01 10:58:35 +0200] [214760] [INFO] Shutting down: Master
+[2020-09-01 10:58:39 +0200] [215044] [INFO] Starting gunicorn 20.0.4
+[2020-09-01 10:58:39 +0200] [215044] [INFO] Listening at: http://127.0.0.1:8000 (215044)
+[2020-09-01 10:58:39 +0200] [215044] [INFO] Using worker: sync
+[2020-09-01 10:58:39 +0200] [215046] [INFO] Booting worker with pid: 215046
+[2020-09-01 11:00:02 +0200] [215044] [INFO] Handling signal: int
+[2020-09-01 11:00:02 +0200] [215046] [INFO] Worker exiting (pid: 215046)
+[2020-09-01 11:00:02 +0200] [215044] [INFO] Shutting down: Master
