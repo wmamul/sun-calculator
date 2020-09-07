@@ -17,7 +17,7 @@ NORMAL_FONT = 'LiberationSans-Regular'
 
 TWOPLACES = Decimal(10) ** -2
 
-THERMO_TYPES = [0, 0.17, 0.19, 0.32]
+THERMO_TYPES = [0.17, 0.19, 0.32]
 
 INVERTER_TYPES = {'Huawei SUN2000-4KTL-MO': 15, 'Solar EDGE SE3K-SE10K': 12}
 
@@ -84,7 +84,6 @@ class Panel:
 
 class Offer:
 
-    _address = ''
     _owner = ''
     _type = ''
     _package = ''
@@ -98,7 +97,6 @@ class Offer:
     _optimizers = False
 
     def __init__(self, form, p=None):
-        self._address = form.address.data
         self._owner = form.owner.data
         self._yearly_mean = form.yearly_mean.data
         self._type = form.installation_type.data
@@ -123,9 +121,9 @@ class Offer:
 
     def _get_power(self):
 
-        if self._yearly_mean < 10:
-            self._power = self._yearly_mean * Decimal(1.2)
-        else:
+        self._power = self._yearly_mean * Decimal(1.2)
+
+        if self._power > 10:
             self._power = self._yearly_mean * Decimal(1.3)
 
     def _raw(self):
@@ -188,9 +186,6 @@ class Offer:
 
         getcontext().rounding = ROUND_CEILING
 
-        if self._power == 0:
-            tmp = self.power
-
         self._num_of_panels = ((self._power * 1000) / self._panel.power).quantize(Decimal(1))
         return str(self._num_of_panels)
 
@@ -209,7 +204,12 @@ class Offer:
 
     @property
     def power(self):
-        return str(self._power)
+        if self._power == 0:
+            self._get_power()
+
+        self._power = self._panel.power * self._num_of_panels
+
+        return str(self._remove_exponent(self._power) / 1000)
 
     @power.setter
     def power(self, value: Decimal):
@@ -230,17 +230,28 @@ class Offer:
 
     def calculate(self):
 
-        prices = {
-                'Cena instalacji netto: ': self.net_price,
-                'Cena instalacji brutto: ': self.gross(self._net_price),
-                'Cena instalacji brutto z optymalizatorami: ': self.gross(self._net_price + self._with_opts()),
-                'Koszt instalacji z dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price),
-                'Koszt instalacji z optymalizatorami i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price + self._with_opts()),
-                f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_thermo()),
-                f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._with_thermo()),
-                f'Koszt instalacji z optymalizatorami i ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_opts_and_thermo()),
-                f'Koszt instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": ': str(self._with_subsidy(self._with_opts_and_thermo()))
-                }
+        if self._optimizers:
+            prices = {
+                    'Cena instalacji netto: ': self.net_price,
+                    'Cena instalacji brutto: ': self.gross(self._net_price),
+                    'Cena instalacji brutto z optymalizatorami: ': self.gross(self._net_price + self._with_opts()),
+                    'Wartość instalacji z dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price),
+                    'Wartość instalacji z optymalizatorami i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price + self._with_opts()),
+                    f'Wartość instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_thermo()),
+                    f'Wartość instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._with_thermo()),
+                    f'Wartość instalacji z optymalizatorami i ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_opts_and_thermo()),
+                    f'Wartość instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": ': str(self._with_subsidy(self._with_opts_and_thermo()))
+                    }
+        
+        else:
+            prices = {
+                    'Cena instalacji netto: ': self.net_price,
+                    'Cena instalacji brutto: ': self.gross(self._net_price),
+                    'Wartość instalacji z dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._net_price),
+                    f'Wartość instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%: ': str(self._with_thermo()),
+                    f'Wartość instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ': self.gross_with_subsidy(self._with_thermo())
+                    }
+
         ordered_prices = LastUpdatedOrderedDict()
 
         for key, value in prices.items():
@@ -261,14 +272,13 @@ class Offer:
         pdfmetrics.registerFont(TTFont('Liberationsans-BoldItalic', 'LiberationSans-BoldItalic.ttf'))
 
         pdf_map = {
-                'Adres: ': self._address,
                 'Właściciel: ': self._owner,
+                'Ilość paneli: ': self.num_of_panels,
                 'Proponowana moc instalacji: ': f'{self.power}kW',
                 'Średnie roczne zużycie energetyczne: ': f'{self.yearly_mean}MWH',
                 'Rodzaj instalacji: ': self._type,
                 'Rodzaj paneli fotowoltaicznych: ': self.panel[0],
                 'Inwerter: ': self._inverter.name,
-                'Ilość paneli: ': self.num_of_panels,
                 'Gwarancja paneli: ': f'{self._panel.product_warranty} letnia gwarancja produktowa, {self._panel.linear_warranty} letnia gwarancja liniowa',
                 'Gwarancja inwerter: ': f'{self._inverter.warranty} lat',
                 'Optymalizatory: ': "Nie" if not self._optimizers else f'{PACKAGE_OPTS[self._package]} zł',
@@ -307,15 +317,15 @@ class Offer:
             field_width = stringWidth(field.split('\n')[-1], BOLD_FONT, 12)
             ver_diff = text.getCursor()[1] - field_cursor[1]
 
-            if key == f'Koszt instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": '\
-            or key == f'Koszt instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ':
+            if key == f'Wartość instalacji z optymalizatorami, ulgą termomodernizacyjną {self._thermo[2:4]}%\n oraz dofinansowaniem "Mój prąd": '\
+            or key == f'Wartość instalacji z ulgą termomodernizacyjną {self._thermo[2:4]}%\n i dofinansowaniem "Mój prąd": ':
                 ver_diff = ver_diff / 2
 
             text.moveCursor(field_width + 0.1 * cm, ver_diff)
 
             text.setFont(NORMAL_FONT, 12)
 
-            if 'Cena' in key or 'Koszt' in key:
+            if 'Cena' in key or 'Wartość' in key:
                 field_value = f'{value} zł'
             else:
                 field_value = f'{value}'

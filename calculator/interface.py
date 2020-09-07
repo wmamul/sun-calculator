@@ -7,7 +7,6 @@ from wtforms.validators import InputRequired
 
 class OfferClass(Form):
 
-    address = StringField('Adres', validators=[InputRequired()])
     owner = StringField('Właściciel', validators=[InputRequired()])
     yearly_mean = DecimalField('Średnie roczne zużycie energetyczne [MWh]', places=3,\
             rounding=ROUND_DOWN, validators=[InputRequired()])
