@@ -207,9 +207,9 @@ class Offer:
         if self._power == 0:
             self._get_power()
 
-        self._power = self._panel.power * self._num_of_panels
+        self._power = (self._panel.power * self._num_of_panels) / 1000
 
-        return str(self._remove_exponent(self._power) / 1000)
+        return str(self._remove_exponent(self._power))
 
     @power.setter
     def power(self, value: Decimal):
