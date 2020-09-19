@@ -94,6 +94,7 @@ class Offer:
     _power = 0
     _num_of_panels = 0
     _net_price = 0
+    _price_per_kw = 0
     _optimizers = False
 
     def __init__(self, form, p=None):
@@ -105,6 +106,10 @@ class Offer:
         self._optimizers = form.optimisers.data
         self._panel = Panel((form.panel.data, PANEL_TYPES[form.panel.data]))
         self._inverter = Inverter((form.inverter.data, INVERTER_TYPES[form.inverter.data]))
+        if form.power_price.data:
+            self._price_per_kw = form.power_price.data
+        else:
+            self._price_per_kw = PACKAGE_PRICES[self._package]
 
         getcontext().prec = 3
 
@@ -131,10 +136,10 @@ class Offer:
             self._get_power()
 
         if 'EDGE' in self._inverter.name:
-            self._net_price = self._power * (PACKAGE_PRICES[self._package] + SOLAR_EDGE_ADDITION)
+            self._net_price = self._power * (self._price_per_kw + SOLAR_EDGE_ADDITION)
 
         else:
-            self._net_price = self._power * PACKAGE_PRICES[self._package]
+            self._net_price = self._power * self._price_per_kw
 
 
     def _with_opts(self):
