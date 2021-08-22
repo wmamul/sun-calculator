@@ -48,16 +48,16 @@ PACKAGE_CONSTS = {
         }
 
 FOOTER = [
-        'Kamil Kupsik',
+        'Tomasz Kowalski',
         'Doradca handlowy',
-        '+48 515 076 934',
-        'HSG Sun Sp. z.o.o.',
-        'ul. Okopowa 58/72',
-        '01-042 Warszawa',
-        '+48 530 439 439 biuro',
-        '+48 530 164 164 infolinia handlowa',
-        'mailto: kamil.kupsik@hsgsun.com.pl',
-        'https://www.hsgsun.com.pl'
+        '+48 123 456 789',
+        'Sun Sp. z.o.o.',
+        'ul. Daleka 34/21',
+        '98-765 Warszawa',
+        '+48 123 456 789 biuro',
+        '+48 123 456 789 infolinia handlowa',
+        'mailto: tomasz.kowalski@sun.com.pl',
+        'https://www.sun.com.pl'
         ]
         
 class LastUpdatedOrderedDict(OrderedDict):
@@ -305,9 +305,6 @@ class Offer:
 
         pdf_canvas = Canvas('static/offers/' + title)
         pdf_canvas.setTitle(title)
-
-        pdf_canvas.drawImage('static/images/hsg_logo.png', 1 * cm, 27 * cm,\
-                width=186, height=44, mask='auto')
 
         text = pdf_canvas.beginText(2 * cm, 25 * cm)
 
